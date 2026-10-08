@@ -116,11 +116,6 @@ void reloadGame() {
     game_paused = false;
 }
 //prevent the camera from moving out of
-#include "bn_regular_bg_ptr.h"
-#include "bn_camera_ptr.h"
-#include "bn_sprite_ptr.h"
-#include "bn_math.h"
-#include "bn_size.h"
 
 //adjust the camera and player sprite to prevent them from moving out of bounds of the background
 void adjustSprites(const bn::regular_bg_ptr& bg, bn::camera_ptr& camera, bn::sprite_ptr& player_sprite) {
@@ -161,7 +156,14 @@ int main()
     Player player(player_sprite);
     bn::sprite_text_generator text_generator(unifont_sprite_font);
     //the game requires very few text sprites so four should be enough
+    
     bn::vector<bn::sprite_ptr, 10> text_sprites;
+    //create vector for bounding boxes and add a test to the vector
+    bn::vector<bn::rect, 8> bounding_boxes;
+    //test rect for the top left side of the screen
+    bn::fixed map_left   = bg.x() - bg_half_width;
+
+    bn::rect test_rect = bn::rect(0,0112, 16,);
     //test sprites delete before pushing
     bg.set_camera(camera);
     while(true)
