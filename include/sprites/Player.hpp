@@ -5,62 +5,70 @@ class Player{
     int height = 16;
     int direction = 0;
     bool alive = true;
-    Player(bn::sprite_ptr player_sprite) : player_sprite(player_sprite)
+    bn::fixed dx = player_sprite.x();
+    bn::fixed dy = player_sprite.y();
+    Player(bn::sprite_ptr player_sprite) : player_sprite(player_sprite),dx(player_sprite.x()),
+    dy(player_sprite.y())
     {
         
     }
-    void move_check(){
+    void move_check(const bn::vector<bn::rect, 8>& bounding_boxes)
+    {
+        bn::fixed next_x = player_sprite.x();
+        bn::fixed next_y = player_sprite.y();
         
-        //player movement checks
-        if(bn::keypad::right_held())
-        {
-            player_sprite.set_x(player_sprite.x() + 1);   
-        }
         if(bn::keypad::left_held())
         {
-            player_sprite.set_x(player_sprite.x() - 1);
+            next_x -= 1;
+            this->direction = 3;
+        }
+        
+        if(bn::keypad::right_held())
+        {
+            next_x += 1;
+            this->direction = 4;
         }
         
         if(bn::keypad::up_held())
         {
-            player_sprite.set_y(player_sprite.y() - 1);
+            next_y -= 1;
+            this->direction = 1;
         }
+        
         if(bn::keypad::down_held())
         {
-            player_sprite.set_y(player_sprite.y() + 1);   
-        }
-        //update direction
-        if(bn::keypad::up_held() && !bn::keypad::down_held() && bn::keypad::left_held() && !bn::keypad::right_held()){
-            direction = 0;
-        }
-        else if(bn::keypad::up_held() && !bn::keypad::down_held() && !bn::keypad::left_held() && !bn::keypad::right_held()){
-            direction = 1;
-        }
-        else if(bn::keypad::up_held() && !bn::keypad::down_held() && !bn::keypad::left_held() && bn::keypad::right_held()){
-            direction = 2;
-        }
-        else if(!bn::keypad::up_held() && !bn::keypad::down_held() && bn::keypad::left_held() && !bn::keypad::right_held()){
-            direction = 3;
+            next_y += 1;
+            this->direction = 6;
         }
         
-        else if(!bn::keypad::up_held() && !bn::keypad::down_held() && !bn::keypad::left_held() && bn::keypad::right_held()){
-            direction = 4;
-        }
-        else if(!bn::keypad::up_held() && bn::keypad::down_held() && bn::keypad::left_held() && !bn::keypad::right_held()){
-            direction = 5;
-        }
-        else if(!bn::keypad::up_held() && bn::keypad::down_held() && !bn::keypad::left_held() && !bn::keypad::right_held()){
-            direction = 6;
-        }
-        else if(!bn::keypad::up_held() && bn::keypad::down_held() && !bn::keypad::left_held() && bn::keypad::right_held()){
-            direction = 7;
+        bn::rect next_bounds(
+            next_x.integer() - width / 2,
+            next_y.integer() - height / 2,
+            width,
+            height
+        );
+        
+        bool blocked = false;
+        
+        for(const auto& box : bounding_boxes)
+        {
+            if(collides(next_bounds, box))
+            {
+                blocked = true;
+                break;
+            }
         }
         
+        if(! blocked)
+        {
+            player_sprite.set_position(next_x, next_y);
+            dx = next_x;
+            dy = next_y;
+        }
     }
     bn::rect get_bounds() const {
         
-        bn::fixed_point pos = player_sprite.position();
-        return bn::rect(pos.x().integer() - (width / 2), pos.y().integer() - (height / 2), width, height);
+        return bn::rect(dx.integer() - (width / 2), dy.integer() - (height / 2), width, height);
     }
     bn::fixed getX(){
         return player_sprite.x();
