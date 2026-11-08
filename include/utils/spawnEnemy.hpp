@@ -1,3 +1,5 @@
+#pragma once
+
 void spawnEnemy(bn::vector<Enemy, 30>& enemies, bn::random& rng,int amount) {
     //choose which side of the screen to spawn an enemy on and spawn it at a random location on that side
     //check if creating a new enemy would exceed the vector's capacity

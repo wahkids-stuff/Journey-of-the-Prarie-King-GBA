@@ -42,3 +42,4 @@ endif
 # Include main makefile:
 #---------------------------------------------------------------------------------------------------------------------
 include $(LIBBUTANOABS)/butano.mak
+#include custom makefile for the project unrelated to butano

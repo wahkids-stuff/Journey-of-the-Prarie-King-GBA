@@ -1,3 +1,4 @@
+#pragma once
 class Player{
     public:
     bn::sprite_ptr player_sprite;
